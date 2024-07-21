@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "611750427434",
+    "project_id": "fir-e9ee0",
+    "storage_bucket": "fir-e9ee0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:611750427434:android:09b5f1077c165ab4557c53",
+        "android_client_info": {
+          "package_name": "com.example.firease_study"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnBPaPkNbZhLG1abZqDdcxPbOqS7g5FiA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
