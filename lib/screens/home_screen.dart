@@ -36,8 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: Icon(Icons.person),
             onPressed: () {
-              // Navigate to Profile Page
-              Navigator.pushNamed(context, '/profile', arguments: 'currentUsername'); // Replace 'currentUsername' with the actual username
+              // Pass the username of the current user
+              Navigator.pushNamed(context, '/profile', arguments: 'currentUsername');
             },
           ),
         ],

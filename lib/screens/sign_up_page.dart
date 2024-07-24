@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -16,6 +17,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final _mobileController = TextEditingController();
   File? _image;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage() async {
@@ -25,6 +27,14 @@ class _SignUpPageState extends State<SignUpPage> {
         _image = File(pickedFile.path);
       }
     });
+  }
+
+  Future<String> _uploadImage(File image) async {
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    Reference storageReference = _storage.ref().child('profile_images/$fileName');
+    UploadTask uploadTask = storageReference.putFile(image);
+    await uploadTask.whenComplete(() => null);
+    return await storageReference.getDownloadURL();
   }
 
   void _signUp() async {
@@ -38,7 +48,7 @@ class _SignUpPageState extends State<SignUpPage> {
       return;
     }
 
-    final imagePath = _image!.path;
+    final imageUrl = await _uploadImage(_image!);
 
     final userDoc = _firestore.collection('users').doc(username);
 
@@ -51,9 +61,9 @@ class _SignUpPageState extends State<SignUpPage> {
         'password': password,
         'name': name,
         'mobile': mobile,
-        'image': imagePath,
+        'image': imageUrl,
       });
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/home', arguments: username);
     }
   }
 
@@ -63,7 +73,7 @@ class _SignUpPageState extends State<SignUpPage> {
       appBar: AppBar(
         title: Text('Sign Up'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
@@ -86,8 +96,15 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             SizedBox(height: 20),
             _image == null
-                ? Text('No image selected.')
-                : Image.file(_image!),
+                ? CircleAvatar(
+                    radius: 40,
+                    child: Icon(Icons.person, size: 40),
+                  )
+                : CircleAvatar(
+                    radius: 40,
+                    backgroundImage: FileImage(_image!),
+                  ),
+            SizedBox(height: 10),
             ElevatedButton(
               onPressed: _pickImage,
               child: Text('Pick Image'),
